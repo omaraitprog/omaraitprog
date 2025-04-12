@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cruds</title>
+    <link rel="stylesheet" href="Cruds.css">
+</head>
+<body>
+ 
+<div class="cruds">
+    <div class="head">
+        <h2>Cruds </h2>
+    <h4>Product management system</h4>
+   
+
+
+    <input type="text " placeholder="Product" id="title">
+
+<div class="items">
+    <input onkeyup="getTotal()" type="number" id="prix" placeholder="Prise" >
+    <input onkeyup="getTotal()" type="number" placeholder="taxes" id="taxes" >
+    <input onkeyup="getTotal()" type="number" placeholder="ads" id="ads">
+
+    <input type="number" placeholder="discount" id="disc">
+    <br><br><br>
+<p id="total"  onkeyup="getTotal()"  >0</p>
+
+<br><br>
+
+</div>
+<input type="text"  id="quantity" placeholder="Quantity">
+<input type="text" id="category" placeholder="category">
+<button type="submit"id="create" onclick="getTotal()"> Create </button>
+
+    </div>
+
+
+
+   
+
+<button id="deleteAll">Delete All</button>
+<table >
+    <tr >
+        <th>Id</th>
+        <th>title</th>
+        <th>taxes</th>
+        <th>Ad<s/th>
+            <th>Discount</th>
+            <th>CAtegory</th>            
+            <th>update</th>
+            <th>Delete</th>
+
+        <th>Id</th>
+
+    </tr>
+    
+        <tbody id="tbody">
+        </tbody>
+       </table></div>
+    </body>
+</html>
+<script>
+    let title =document.getElementById("title");
+let Prise =document.getElementById("prix");
+let ads =document.getElementById("ads");
+let disc =document.getElementById("disc");
+let create =document.getElementById("create");
+let Searchtitle=document.getElementById('')
+let count=document.getElementById("quantity");
+let total=document.getElementById("total");
+let taxes=document.getElementById("taxes");
+let category=document.getElementById("category");
+let searchcat=document.getElementById("searchcat");
+let deleteAll=document.getElementById("deleteAll");
+let searchform=document.getElementById('search');
+let mood ="create";
+let tmp;
+
+
+
+
+//get totlal
+function getTotal(){
+    let Prise =document.getElementById("prix");
+    if(Prise.value != " "){
+        let result= (+Prise.value + +taxes.value + +ads.value) - +disc.value;
+        total.innerHTML=result;
+        total.style.backgroundColor='green';
+        total.style.color='yellowgreen';
+
+        
+    }else{
+        total.innerHTML=' '
+    }
+}
+            if(localStorage.Myproduct != null){
+newPro=JSON.parse(localStorage.Myproduct)
+}else{
+     newPro=[];
+}
+    
+
+
+create.onclick=function(){
+    let newProduct={
+        title:title.value,
+        Prise:Prise.value,
+        ads:ads.value,
+        disc:disc.value,
+        total:total.value,
+        taxes:taxes.value,
+        count:count.value,
+        category:category.value,
+       
+    }
+if(mood === "create"){
+    if(newProduct.count >1){
+    for(let i=0;i<newProduct.count ;i++){
+        newPro.push(newProduct); 
+    }
+}else{
+    newPro.push(newProduct);
+}
+}else{
+newPro[tmp]=newProduct;
+mood="create"
+count.style.display='block';
+create.innerHTML="Create";
+}
+
+      //save localstorage
+    localStorage.setItem("Myproduct", JSON.stringify(newPro));
+    clearData();
+    showData();
+    
+   }
+
+//clear input
+function clearData(){
+    title.value='';
+    taxes.value='';
+total.innerHTML=' ';
+    ads.value='';
+    disc.value='';
+    Prise.value='';
+    count.value=' ';
+    category.value='';
+
+
+}
+//Read 
+function showData(){
+let table=' ';
+for(let i=0;i<newPro.length;i++){
+    table+=`
+      
+     <tr>
+            <td>${i + 1}</td>
+            <td>${newPro[i].title}</td>
+            <td>${newPro[i].Prise}DH</td>
+            <td>${newPro[i].taxes}DH</td>
+            <td>${newPro[i].ads}DH</td>
+            <td>${newPro[i].disc}DH</td>
+            <td>${newPro[i].total}DH</td>
+            <td>${newPro[i].category}</td>
+            <td><button onclick="updatePro(${i})">Update</button></td>
+            <td><button onclick="deletepro(${i})">Delete</button></td>
+        </tr>
+    `
+    
+}
+document.getElementById("tbody").innerHTML = table
+}
+        
+        //delete
+
+        function deletepro(i){
+            newPro.splice(i,1);
+            localStorage.Myproduct=JSON.stringify(newPro);
+            showData();
+
+        }
+       
+
+deleteAll.onclick=function(){
+    localStorage.clear();
+    newPro.splice(0);
+    showData();
+
+}
+
+//Update function
+function updatePro(i){
+title.value=newPro[i].title;
+ads.value=newPro[i].ads;
+Prise.value=newPro[i].Prise;
+disc.value=newPro[i].disc;
+taxes.value=newPro[i].taxes;
+
+getTotal();
+tmp=i;
+ category.value=newPro[i].category;
+count.style.display="none";
+create.innerText="Update";
+mood="update";
+scroll({
+    top:0,
+    behavior:"smooth"
+})
+
+}
+   showData();
+</script>
